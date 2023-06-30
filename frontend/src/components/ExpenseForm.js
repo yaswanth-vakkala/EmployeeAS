@@ -13,6 +13,7 @@ import {
 import { useGetAllProjectsQuery } from '../slices/projectsApiSlice';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
+import FilesUploadComponent from './FilesUploadComponent';
 
 const ExpenseForm = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -204,12 +205,13 @@ const ExpenseForm = () => {
               value={billProof}
               onChange={(e) => setBillProof(e.target.value)}
             ></Form.Control> */}
-            <Form.Control
+            {/* <Form.Control
               label="Choose File"
               onChange={uploadImageHandler}
               type="file"
             ></Form.Control>
-            {loadingUpload && <Loader />}
+            {loadingUpload && <Loader />} */}
+            <FilesUploadComponent />
           </Form.Group>
 
           <Button disabled={isLoading} type="submit" variant="primary">

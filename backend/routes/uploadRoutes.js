@@ -44,50 +44,14 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(null, false);
-      const err = new Error('Only .png, .jpg and .jpeg format allowed!');
-      err.name = 'ExtensionError';
-      return cb(err);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
     }
   },
 }).array('uploadedImages', 2);
 // const uploadSingleImage = upload.single('image');
 
 router.post('/', (req, res) => {
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
-      res
-        .status(500)
-        .send({ error: { message: `Multer uploading error: ${err.message}` } })
-        .end();
-      return;
-    } else if (err) {
-      // An unknown error occurred when uploading.
-      if (err.name == 'ExtensionError') {
-        res
-          .status(413)
-          .send({ error: { message: err.message } })
-          .end();
-      } else {
-        res
-          .status(500)
-          .send({
-            error: { message: `unknown uploading error: ${err.message}` },
-          })
-          .end();
-      }
-      return;
-    }
-
-    // Everything went fine.
-    // show file `req.files`
-    // show body `req.body`
-    res.status(200).send({
-      message: 'Images uploaded successfully',
-      image: `${req.file.path}`,
-    });
-  });
-
+  u
   // uploadSingleImage(req, res, function (err) {
   //   if (err) {
   //     res.status(400).send({ message: err.message });

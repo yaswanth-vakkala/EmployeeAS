@@ -34,73 +34,71 @@ const Header = () => {
         collapseOnSelect
         className="d-flex justify-content-around"
       >
-        <LinkContainer to="/" className="px-4">
+        <LinkContainer to="/" className="px-5">
           <Navbar.Brand>Expense Approval System</Navbar.Brand>
         </LinkContainer>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
-        <Container className="px-5">
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              {userInfo ? (
-                <>
-                  <NavDropdown
-                    title={userInfo.firstName + ' ' + userInfo.lastName}
-                    id="username"
-                  >
-                    <LinkContainer to="/">
-                      <NavDropdown.Item>Home</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/user/profile">
-                      <NavDropdown.Item>Profile</NavDropdown.Item>
-                    </LinkContainer>
-
-                    {userInfo && userInfo.userType !== 'Admin' && (
-                      <LinkContainer to="user/history">
-                        <NavDropdown.Item>Expenses History</NavDropdown.Item>
-                      </LinkContainer>
-                    )}
-
-                    {/* Higher User Links */}
-                    {userInfo && userInfo.userType !== 'Employee' && (
-                      <LinkContainer to="/expense/report">
-                        <NavDropdown.Item>Expenses Report</NavDropdown.Item>
-                      </LinkContainer>
-                    )}
-                    {/* FinanceDepartment Links */}
-                    {userInfo && userInfo.userType === 'FinanceDepartment' && (
-                      <LinkContainer to="/userlist">
-                        <NavDropdown.Item>Add Money</NavDropdown.Item>
-                      </LinkContainer>
-                    )}
-
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
-              ) : (
-                <LinkContainer to="/login">
-                  <Nav.Link>
-                    <FaUser size={'1.1em'} /> Login
-                  </Nav.Link>
-                </LinkContainer>
-              )}
-
-              {/* Admin Links */}
-              {userInfo && userInfo.userType === 'Admin' && (
-                <NavDropdown title="Admin" id="adminmenu">
-                  <LinkContainer to="/admin/userlist">
-                    <NavDropdown.Item>Users</NavDropdown.Item>
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ms-auto px-5">
+            {userInfo ? (
+              <>
+                <NavDropdown
+                  title={userInfo.firstName + ' ' + userInfo.lastName}
+                  id="username"
+                >
+                  <LinkContainer to="/">
+                    <NavDropdown.Item>Home</NavDropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/admin/projectlist">
-                    <NavDropdown.Item>Projects</NavDropdown.Item>
+                  <LinkContainer to="/user/profile">
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
                   </LinkContainer>
+
+                  {userInfo && userInfo.userType !== 'Admin' && (
+                    <LinkContainer to="user/history">
+                      <NavDropdown.Item>Expenses History</NavDropdown.Item>
+                    </LinkContainer>
+                  )}
+
+                  {/* Higher User Links */}
+                  {userInfo && userInfo.userType !== 'Employee' && (
+                    <LinkContainer to="/expense/report">
+                      <NavDropdown.Item>Expenses Report</NavDropdown.Item>
+                    </LinkContainer>
+                  )}
+                  {/* FinanceDepartment Links */}
+                  {userInfo && userInfo.userType === 'FinanceDepartment' && (
+                    <LinkContainer to="/userlist">
+                      <NavDropdown.Item>Add Money</NavDropdown.Item>
+                    </LinkContainer>
+                  )}
+
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
                 </NavDropdown>
-              )}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
+              </>
+            ) : (
+              <LinkContainer to="/login">
+                <Nav.Link>
+                  <FaUser size={'1.1em'} /> Login
+                </Nav.Link>
+              </LinkContainer>
+            )}
+
+            {/* Admin Links */}
+            {userInfo && userInfo.userType === 'Admin' && (
+              <NavDropdown title="Admin" id="adminmenu">
+                <LinkContainer to="/admin/userlist">
+                  <NavDropdown.Item>Users</NavDropdown.Item>
+                </LinkContainer>
+                <LinkContainer to="/admin/projectlist">
+                  <NavDropdown.Item>Projects</NavDropdown.Item>
+                </LinkContainer>
+              </NavDropdown>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
     </header>
   );

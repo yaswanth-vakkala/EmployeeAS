@@ -10,6 +10,7 @@ import { useUpdateExpenseMutation } from '../slices/expensesApiSlice';
 import Paginate from '../components/Paginate';
 import ExpenseSearchBox from './ExpenseSearchBox';
 import ImageModal from './ImageModal';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const DirectorExpenseList = (props) => {
   const navigate = useNavigate();
@@ -143,10 +144,18 @@ const DirectorExpenseList = (props) => {
                 <Link
                   to={`/expense/calculation/${expense.user}/${expense._id}`}
                 >
-                  <AiOutlineCheck
+                  {/* <AiOutlineCheck
                     size={'1.7em'}
                     color="#00FF00"
                     style={{ cursor: 'pointer' }}
+                  /> */}
+                  <CheckCircleOutlined
+                    style={{
+                      cursor: 'pointer',
+                      color: '#00FF00',
+                      fontSize: '2em',
+                    }}
+                    title="Approve Expense"
                   />
                 </Link>
                 {/* <AiOutlineCheck
@@ -155,11 +164,20 @@ const DirectorExpenseList = (props) => {
                   onClick={() => handleApprove(expense)}
                   style={{ cursor: 'pointer' }}
                 /> */}
-                <AiOutlineClose
+                {/* <AiOutlineClose
                   size={'1.7em'}
                   color="#FF0000"
                   onClick={() => showModal(expense)}
                   style={{ cursor: 'pointer' }}
+                /> */}
+                <CloseCircleOutlined
+                  style={{
+                    cursor: 'pointer',
+                    color: '#FF0000',
+                    fontSize: '2em',
+                  }}
+                  onClick={() => showModal(expense)}
+                  title="Reject Expense"
                 />
               </td>
             </tr>

@@ -6,11 +6,7 @@ const expenseSchema = new mongoose.Schema(
     empId: { type: String, required: ['Employee ID is required'] },
     projName: { type: String, required: ['Project name is required'] },
     projId: { type: String, required: ['Project ID is required'] },
-    billProof: {
-      type: String,
-      default: 'Resource Link',
-      required: ['Bill Proof is required'],
-    },
+    billProof: [{ type: String, default: 'Resource Link' }],
     status: {
       type: String,
       enum: ['InProcess', 'Reimbursed', 'Rejected'],

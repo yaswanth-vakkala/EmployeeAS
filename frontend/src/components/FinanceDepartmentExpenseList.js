@@ -5,6 +5,7 @@ import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { Modal, Input } from 'antd';
 import { useState } from 'react';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 import { useUpdateExpenseMutation } from '../slices/expensesApiSlice';
 
@@ -153,17 +154,37 @@ const FinanceDepartmentExpenseList = (props) => {
                   justifyContent: 'space-between',
                 }}
               >
-                <AiOutlineCheck
+                {/* <AiOutlineCheck
                   size={'1.7em'}
                   color="#00FF00"
                   onClick={() => handleApprove(expense)}
                   style={{ cursor: 'pointer' }}
+                  title="Approve Expense"
+                /> */}
+                <CheckCircleOutlined
+                  style={{
+                    cursor: 'pointer',
+                    color: '#00FF00',
+                    fontSize: '2em',
+                  }}
+                  onClick={() => handleApprove(expense)}
+                  title="Approve Expense"
                 />
-                <AiOutlineClose
+                {/* <AiOutlineClose
                   size={'1.7em'}
                   color="#FF0000"
                   onClick={() => showModal(expense)}
                   style={{ cursor: 'pointer' }}
+                  title="Reject Expense"
+                /> */}
+                <CloseCircleOutlined
+                  style={{
+                    cursor: 'pointer',
+                    color: '#FF0000',
+                    fontSize: '2em',
+                  }}
+                  onClick={() => showModal(expense)}
+                  title="Reject Expense"
                 />
               </td>
             </tr>
