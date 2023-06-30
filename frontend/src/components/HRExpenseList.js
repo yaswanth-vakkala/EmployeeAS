@@ -1,4 +1,5 @@
 import { Table, Col, Container } from 'react-bootstrap';
+import { useState } from 'react';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai';
@@ -8,10 +9,25 @@ import { useUpdateExpenseMutation } from '../slices/expensesApiSlice';
 import Paginate from '../components/Paginate';
 import ExpenseSearchBox from './ExpenseSearchBox';
 import ImageModal from './ImageModal';
-import { Modal } from 'antd';
+import { Modal, Input } from 'antd';
 
 const HRExpenseList = (props) => {
   const { confirm } = Modal;
+  const { TextArea } = Input;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tempExpense, setTempExpense] = useState({});
+  const [rejectionReason, setRejectionReason] = useState('');
+  const showModal = (expense) => {
+    setIsModalOpen(true);
+    setTempExpense(expense);
+  };
+  const handleOk = () => {
+    handleReject(tempExpense);
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   let index = 0;
   function findIndex(i) {
     let row_index = i + 1;
@@ -32,7 +48,6 @@ const HRExpenseList = (props) => {
       title: 'Are you sure to accept this expense?',
       content: 'This action is not reversable',
       okText: 'Yes',
-      okType: 'danger',
       cancelText: 'No',
       async onOk() {
         const data = { ...expense, currentStatus: 'HRApproved' };
@@ -49,8 +64,7 @@ const HRExpenseList = (props) => {
   }
 
   async function handleReject(expense) {
-    let rejectionReason = prompt('Please enter the reason for rejection: ');
-    if (rejectionReason === null) return;
+    if (rejectionReason === '') return;
     const data = {
       ...expense,
       status: 'Rejected',
@@ -67,6 +81,22 @@ const HRExpenseList = (props) => {
 
   return (
     <>
+      <Modal
+        title="Please provide the rejection reason for the expense?"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Reject"
+        cancelText="Cancel"
+      >
+        <TextArea
+          rows={4}
+          placeholder="Enter Rejection Reason to reject the expense"
+          maxLength={100}
+          value={rejectionReason}
+          onChange={(e) => setRejectionReason(e.target.value)}
+        />
+      </Modal>
       {props.keyword && (
         <Link to="/" className="btn btn-light my-2">
           Go Back
@@ -127,7 +157,7 @@ const HRExpenseList = (props) => {
                 <AiOutlineClose
                   size={'1.7em'}
                   color="#FF0000"
-                  onClick={() => handleReject(expense)}
+                  onClick={() => showModal(expense)}
                   style={{ cursor: 'pointer' }}
                 />
               </td>
