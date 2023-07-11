@@ -4,7 +4,7 @@ export default class FilesUploadComponent extends Component {
     return (
       <div className="container">
         <div className="row">
-          <form>
+          <form encType='multipart/formdata'>
             <div className="form-group">
               <input type="file" multiple />
               <button

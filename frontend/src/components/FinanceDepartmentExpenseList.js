@@ -139,9 +139,7 @@ const FinanceDepartmentExpenseList = (props) => {
               ) : (
                 <td>
                   <Container>
-                    <ImageModal
-                      src={process.env.REACT_APP_API + expense.billProof}
-                    />
+                    <ImageModal src={expense.billProof} />
                   </Container>
                 </td>
               )}

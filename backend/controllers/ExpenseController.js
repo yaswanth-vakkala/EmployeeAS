@@ -476,8 +476,7 @@ const deleteExpense = asyncHandler(async (req, res) => {
 
   if (
     expense &&
-    (expense.currentStatus === 'EmployeeRequested' ||
-      expense.currentStatus === 'HRApproved') &&
+    expense.currentStatus === 'EmployeeRequested' &&
     expense.status === 'InProcess'
   ) {
     await Expense.deleteOne({ _id: expense._id });

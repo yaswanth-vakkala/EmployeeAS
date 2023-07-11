@@ -4,9 +4,14 @@ import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+} from '@ant-design/icons';
 import { Button, Image, Card, Row, Col, Modal, Steps } from 'antd';
 
+import '../assets/styles/slideShow.css';
 import {
   useDeleteExpenseMutation,
   useDeleteExpenseIMageMutation,
@@ -14,6 +19,15 @@ import {
 import Paginate from '../components/Paginate';
 import ExpenseSearchBox from './ExpenseSearchBox';
 //import ImageModal from './ImageModal';
+import { Carousel } from 'antd';
+const contentStyle = {
+  margin: 0,
+  height: '160px',
+  color: '#fff',
+  lineHeight: '160px',
+  textAlign: 'center',
+  background: '#364d79',
+};
 
 function ExpenseList(props) {
   const { confirm } = Modal;
@@ -44,10 +58,11 @@ function ExpenseList(props) {
       cancelText: 'No',
       async onOk() {
         try {
-          if (expense_img !== '' && expense_img !== 'Resource Link') {
-            let newExpenseImg = expense_img.split('\\');
-            newExpenseImg = newExpenseImg[newExpenseImg.length - 1];
-            await deleteExpenseImage(newExpenseImg);
+          if (expense_img[0] !== '' && expense_img[0] !== 'Resource Link') {
+            const newExpenseImgList = expense_img.map((img) => {
+              return img.split('\\')[1];
+            });
+            deleteExpenseImage(newExpenseImgList);
           }
           await deleteExpenese(expense_id);
           props.refetch();
@@ -199,8 +214,7 @@ function ExpenseList(props) {
                   title={row.description}
                   extra={
                     row.status === 'InProcess' &&
-                    (row.currentStatus === 'EmployeeRequested' ||
-                      row.currentStatus === 'HRApproved') && (
+                    row.currentStatus === 'EmployeeRequested' && (
                       <DeleteOutlined
                         style={{
                           cursor: 'pointer',
@@ -217,7 +231,9 @@ function ExpenseList(props) {
                   <div>
                     <h6>
                       Project Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{' '}
-                      <span>{row.projName}</span>
+                      <span>
+                        {row.projName} (Id: {row.projId})
+                      </span>
                     </h6>
                     <h6>
                       Amount (Rs):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{' '}
@@ -286,7 +302,9 @@ function ExpenseList(props) {
                 <div>
                   <h6>
                     Project Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{' '}
-                    <span>{row.projName}</span>
+                    <span>
+                      {row.projName} (Id: {row.projId})
+                    </span>
                   </h6>
                   <h6>
                     Amount (Rs):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{' '}
@@ -366,7 +384,10 @@ function ExpenseList(props) {
           <div className="claim-card-modal">
             <div className="modal-details">
               <p>
-                Project Name<h4>{selected.projName}</h4>
+                Project Name
+                <h4>
+                  {selected.projName} (Id: {selected.projId})
+                </h4>
               </p>
               <p>
                 Amount (Rs)<h4>{selected.amount}</h4>
@@ -402,14 +423,51 @@ function ExpenseList(props) {
                 />
               </div>
 
-              <div className="modal-proof">
-                <h5>Proof</h5>
-                <Image
-                  src={process.env.REACT_APP_API + selected.billProof}
-                  alt="proof"
-                  width={400}
-                  height={230}
-                />
+              <div className="modal-proof" style={{ width: '400px' }}>
+                <h5>Bill Proofs</h5>
+                <Carousel
+                  dots={true}
+                  arrows={true}
+                  dotPosition="bottom"
+                  nextArrow={<ArrowRightOutlined />}
+                  prevArrow={<ArrowLeftOutlined />}
+                  draggable
+                >
+                  {selected.billProof.map((proof) => {
+                    if (proof === 'Resource Link') {
+                      return <h3>No files uploaded</h3>;
+                    } else if (proof.slice(-3) === 'pdf') {
+                      return (
+                        <a
+                          href={process.env.REACT_APP_API + '/' + proof}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          Click to view pdf file
+                        </a>
+                      );
+                    } else if (
+                      proof.slice(-4) === 'docx' ||
+                      proof.slice(-3) === 'doc' ||
+                      proof.slice(-4) === 'docm'
+                    ) {
+                      return (
+                        <Link to={process.env.REACT_APP_API + '/' + proof}>
+                          Click to download word document file
+                        </Link>
+                      );
+                    } else {
+                      return (
+                        <Image
+                          src={process.env.REACT_APP_API + '/' + proof}
+                          alt="proof"
+                          width={400}
+                          height={230}
+                        />
+                      );
+                    }
+                  })}
+                </Carousel>
               </div>
             </div>
 
@@ -463,25 +521,56 @@ function ExpenseList(props) {
 
                 <div className="modal-proof-mobile">
                   <h5>Proof</h5>
-                  <Button
+                  {/* <Button
                     size="small"
                     type="primary"
                     onClick={() => setVisible(true)}
                   >
                     Show Proof
-                  </Button>
-                  <Image
-                    src={process.env.REACT_APP_API + selected.billProof}
-                    style={{ display: 'none' }}
-                    alt="proof"
-                    preview={{
-                      visible,
-                      src: `${process.env.REACT_APP_API + selected.billProof}`,
-                      onVisibleChange: (value) => {
-                        setVisible(value);
-                      },
-                    }}
-                  />
+                  </Button> */}
+                  <Carousel
+                    dots={true}
+                    arrows={true}
+                    dotPosition="bottom"
+                    nextArrow={<ArrowRightOutlined />}
+                    prevArrow={<ArrowLeftOutlined />}
+                    draggable
+                  >
+                    {selected.billProof.map((proof) => {
+                      if (proof === 'Resource Link') {
+                        return <h3>No files uploaded</h3>;
+                      } else if (proof.slice(-3) === 'pdf') {
+                        return (
+                          <a
+                            href={process.env.REACT_APP_API + '/' + proof}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            Click to view pdf file
+                          </a>
+                        );
+                      } else if (
+                        proof.slice(-4) === 'docx' ||
+                        proof.slice(-3) === 'doc' ||
+                        proof.slice(-4) === 'docm'
+                      ) {
+                        return (
+                          <Link to={process.env.REACT_APP_API + '/' + proof}>
+                            Click to download word document file
+                          </Link>
+                        );
+                      } else {
+                        return (
+                          <Image
+                            src={process.env.REACT_APP_API + '/' + proof}
+                            alt="proof"
+                            width={400}
+                            height={230}
+                          />
+                        );
+                      }
+                    })}
+                  </Carousel>
                 </div>
               </div>
 

@@ -73,7 +73,7 @@ export const expensesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Expenses'],
     }),
-    uploadExpenseImage: builder.mutation({
+    uploadExpenseImages: builder.mutation({
       query: (data) => ({
         url: `${UPLOAD_URL}`,
         method: 'POST',
@@ -89,7 +89,8 @@ export const expensesApiSlice = apiSlice.injectEndpoints({
     }),
     deleteExpenseIMage: builder.mutation({
       query: (expenseImg) => ({
-        url: `${UPLOAD_URL}/image/${expenseImg}`,
+        url: `${UPLOAD_URL}`,
+        body: expenseImg,
         method: 'DELETE',
       }),
       providesTags: ['Expense'],
@@ -105,7 +106,7 @@ export const {
   useCreateExpenseMutation,
   useUpdateExpenseMutation,
   useUpdateExpenseByIdMutation,
-  useUploadExpenseImageMutation,
+  useUploadExpenseImagesMutation,
   useDeleteExpenseMutation,
   useDeleteExpenseIMageMutation,
   useCreateProjectExpenseReportMutation,

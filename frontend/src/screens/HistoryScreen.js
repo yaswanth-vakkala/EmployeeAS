@@ -112,14 +112,12 @@ const HistoryScreen = () => {
                   <td>{expense.empId}</td>
                   <td>{expense.projName}</td>
                   <td>{expense.projId}</td>
-                  {expense.billProof === 'Resource Link' ? (
-                    <td>No files uploaded</td>
+                  {expense.billProof[0] === 'Resource Link' ? (
+                    <td>No Files</td>
                   ) : (
                     <td>
                       <Container>
-                        <ImageModal
-                          src={process.env.REACT_APP_API + expense.billProof}
-                        />
+                        <ImageModal src={expense.billProof} />
                       </Container>
                     </td>
                   )}

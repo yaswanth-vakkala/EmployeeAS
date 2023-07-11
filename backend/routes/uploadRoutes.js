@@ -13,7 +13,9 @@ const storage = multer.diskStorage({
   filename(req, file, cb) {
     cb(
       null,
-      `${file.fieldname}-${Date.now()}-${path.extname(file.originalname)}`
+      `${file.fieldname}-${path.parse(file.originalname).name}-${Date.now()}${path.extname(
+        file.originalname
+      )}`
     );
   },
 });
@@ -37,31 +39,30 @@ const upload = multer({
   limits: { fileSize: 1 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (
-      file.mimetype == 'image/png' ||
-      file.mimetype == 'image/jpg' ||
-      file.mimetype == 'image/jpeg'
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'application/pdf' ||
+      file.mimetype ===
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
       cb(null, true);
     } else {
       cb(null, false);
-      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      return 'Only .png, .jpg and .jpeg format allowed!';
     }
   },
-}).array('uploadedImages', 2);
+});
 // const uploadSingleImage = upload.single('image');
 
-router.post('/', (req, res) => {
-  u
-  // uploadSingleImage(req, res, function (err) {
-  //   if (err) {
-  //     res.status(400).send({ message: err.message });
-  //   }
-
-  //   res.status(200).send({
-  //     message: 'Image uploaded successfully',
-  //     image: `/${req.file.path}`,
-  //   });
-  // });
+router.post('/', upload.array('file', 10), (req, res, next) => {
+  // if (err) {
+  //   res.status(400).send({ message: err.message });
+  // }
+  res.status(200).send({
+    message: 'Images uploaded successfully',
+    files: req.files,
+  });
 });
 
 // const deleteImage = asyncHandler(async (req, res) => {
@@ -77,11 +78,15 @@ router.post('/', (req, res) => {
 // });
 
 const deleteImage = (req, res) => {
-  const fileName = req.params.imgName;
+  
   const __dirname = path.resolve();
   const directoryPath = __dirname + '/uploads/';
 
-  fs.unlink(directoryPath + fileName, (err) => {
+  try {
+    req.body.map((img) => {
+      return fs.unlink(directoryPath + img, (err) => {});
+    });
+  } catch (err) {
     if (err) {
       res.status(500).json({
         message: 'Could not delete the Image. ' + err,
@@ -91,9 +96,9 @@ const deleteImage = (req, res) => {
     res.status(200).json({
       message: 'Image is deleted.',
     });
-  });
+  }
 };
 
-router.route('/image/:imgName').delete(protect, deleteImage);
+router.route('/').delete(protect, deleteImage);
 
 export default router;

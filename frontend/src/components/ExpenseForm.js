@@ -8,14 +8,17 @@ import Select from 'react-select';
 
 import {
   useCreateExpenseMutation,
-  useUploadExpenseImageMutation,
+  useUploadExpenseImagesMutation,
 } from '../slices/expensesApiSlice';
 import { useGetAllProjectsQuery } from '../slices/projectsApiSlice';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 import FilesUploadComponent from './FilesUploadComponent';
+import { message } from 'antd';
 
 const ExpenseForm = () => {
+  const [multipleFiles, setMultipleFiles] = useState('Resource Link');
+
   const { userInfo } = useSelector((state) => state.auth);
   const [empName, setEmpName] = useState(
     userInfo.firstName + ' ' + userInfo.lastName
@@ -24,7 +27,8 @@ const ExpenseForm = () => {
   const [projName, setProjName] = useState('');
   const [projId, setProjId] = useState('');
   const [project, setProject] = useState();
-  const [billProof, setBillProof] = useState('Resource Link');
+  // const [billProof, setBillProof] = useState('Resource Link');
+  let billProof = ['Resource Link'];
   const [cost, setCost] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
@@ -38,25 +42,75 @@ const ExpenseForm = () => {
     error: projectsError,
   } = useGetAllProjectsQuery();
   const [createExpense, { isLoading }] = useCreateExpenseMutation();
-  const [uploadExpenseImage, { isLoading: loadingUpload }] =
-    useUploadExpenseImageMutation();
+  const [uploadExpenseImages, { isLoading: loadingUpload }] =
+    useUploadExpenseImagesMutation();
 
-  const uploadImageHandler = async (e) => {
+  const handleMultipleFileChange = async (e) => {
+    setMultipleFiles(e.target.files);
+  };
+
+  const handleImagesSubmit = async () => {
+    // e.preventDefault();
     const formData = new FormData();
-    formData.append('image', e.target.files[0]);
-    try {
-      const res = await uploadExpenseImage(formData).unwrap();
-      toast.success(res.message);
-      setBillProof(res.image);
-    } catch (err) {
-      toast.error(err?.data?.message || err.error);
+    for (let i = 0; i < multipleFiles.length; i++) {
+      if (multipleFiles === 'Resource Link') {
+        return;
+      } else if (
+        multipleFiles[i].name.slice(-3) !== 'pdf' &&
+        multipleFiles[i].name.slice(-4) !== 'jpeg' &&
+        multipleFiles[i].name.slice(-3) !== 'jpg' &&
+        multipleFiles[i].name.slice(-3) !== 'png' &&
+        multipleFiles[i].name.slice(-4) !== 'docx' &&
+        multipleFiles[i].name.slice(-3) !== 'doc' &&
+        multipleFiles[i].name.slice(-4) !== 'docm'
+      ) {
+        toast.error('Only Image, pdf and word files can be uploaded');
+        return;
+      } else {
+        formData.append('file', multipleFiles[i]);
+      }
     }
+
+    const res = await uploadExpenseImages(formData);
+    let temp = [];
+    for (let i = 0; i < res.data.files.length; i++) {
+      temp.push(res.data.files[i].path);
+    }
+    // setBillProof(temp);
+    billProof = temp;
+    // fetch(`${process.env.REACT_APP_API}/api/upload`, {
+    //   method: 'POST',
+    //   body: formData,
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     // Handle the response from the backend
+    //     console.log(data);
+    //   })
+    //   .catch((error) => {
+    //     // Handle any errors
+    //   });
+
+    // axios
+    //   .post('http://localhost:3000/uploaddufichier', formData)
+    //   .then((res) => res.data);
   };
   const submitHandler = async (e) => {
     e.preventDefault();
+    try {
+      await handleImagesSubmit();
+    } catch (err) {
+      toast.error('file too large in size or file limit exceeded');
+      return;
+    }
     let amount = Math.round(Number(cost) * 100) / 100;
     let dt = new Date();
-    if (date.slice(-2) > dt.getDate()) {
+    const dateSplit = date.split('-');
+    if (
+      dateSplit[0] >= dt.getFullYear() &&
+      dateSplit[1] >= dt.getMonth() + 1 &&
+      dateSplit[2] > dt.getDate()
+    ) {
       toast.error("Please don't select future date");
       return;
     }
@@ -198,20 +252,37 @@ const ExpenseForm = () => {
           </Form.Group>
 
           <Form.Group className="my-3" controlId="billProof">
-            <Form.Label>Upload image of the bill</Form.Label>
+            <Form.Label>Upload all files of the bill at once</Form.Label>
             {/* <Form.Control
               type="text"
               placeholder="Enter image url"
               value={billProof}
               onChange={(e) => setBillProof(e.target.value)}
             ></Form.Control> */}
-            {/* <Form.Control
-              label="Choose File"
-              onChange={uploadImageHandler}
+            <Form.Control
+              label="Choose all files at once to upload"
+              onChange={handleMultipleFileChange}
               type="file"
+              multiple
+              name="multipleImages"
             ></Form.Control>
-            {loadingUpload && <Loader />} */}
-            <FilesUploadComponent />
+            <Form.Label>
+              Only pdf, word, image files upto size 1mb can be uploaded
+            </Form.Label>
+            {/* <Button onClick={handleImagesSubmit} className="my-2">
+              Upload
+            </Button> */}
+            {/* {loadingUpload && <Loader />} */}
+            {/* <FilesUploadComponent /> */}
+            {/* <form>
+              <input
+                type="file"
+                name="multipleImages"
+                multiple
+                onChange={handleMultipleFileChange}
+              />
+              <button onClick={handleImagesSubmit}>Upload</button>
+            </form> */}
           </Form.Group>
 
           <Button disabled={isLoading} type="submit" variant="primary">

@@ -75,6 +75,7 @@ const HRExpenseList = (props) => {
       await updateExpense(data);
       props.refetch();
       toast.success('Expense Rejected Successfully');
+      setRejectionReason('');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -129,14 +130,12 @@ const HRExpenseList = (props) => {
               <td>{expense.empId}</td>
               <td>{expense.projName}</td>
               <td>{expense.projId}</td>
-              {expense.billProof === 'Resource Link' ? (
+              {expense.billProof[0] === 'Resource Link' ? (
                 <td>No Image</td>
               ) : (
                 <td>
                   <Container>
-                    <ImageModal
-                      src={process.env.REACT_APP_API + expense.billProof}
-                    />
+                    <ImageModal src={expense.billProof} />
                   </Container>
                 </td>
               )}
