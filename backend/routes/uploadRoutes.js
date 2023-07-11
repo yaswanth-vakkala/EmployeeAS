@@ -55,7 +55,7 @@ const upload = multer({
 });
 // const uploadSingleImage = upload.single('image');
 
-router.post('/', upload.array('file', 10), (req, res, next) => {
+router.post('/', upload.array('file', 12), (req, res, next) => {
   // if (err) {
   //   res.status(400).send({ message: err.message });
   // }

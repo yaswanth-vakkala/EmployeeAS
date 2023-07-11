@@ -267,7 +267,7 @@ const ExpenseForm = () => {
               name="multipleImages"
             ></Form.Control>
             <Form.Label>
-              Only pdf, word, image files upto size 1mb can be uploaded
+              Only 12 pdf, word, image files upto size 1mb can be uploaded
             </Form.Label>
             {/* <Button onClick={handleImagesSubmit} className="my-2">
               Upload
